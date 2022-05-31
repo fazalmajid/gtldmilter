@@ -35,6 +35,11 @@ and run, using SMF, daemontools or (shudder) systemd the following program as a 
     mkdir -p /var/spool/postfix/milter
     chown postfix:postfix /var/spool/postfix/milter
 
+You will need two config files:
+
+* `/etc/postfix/gtlds.bad` with a list of the dubious gTLDs, one per line
+* `/etc/postfix/dests.bad` with a list of the recipients that trigger filtering of dubious gTLDs, one per line
+
 finally run, using SMF, daemontools or (shudder) systemd the `gtldmilter` program as a user in the `postfix` group.
 
 [1]: https://www.theregister.com/2012/06/29/domain_land_grab_under_the_microscope/
