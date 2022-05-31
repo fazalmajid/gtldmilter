@@ -20,7 +20,7 @@ ADD master.cf /etc/postfix/master.cf
 ADD gtlds.bad /etc/postfix
 ADD dests.bad /etc/postfix
 ADD aliases /etc/postfix
-RUN postmap /etc/postfix/aliases
+RUN newaliases
 RUN echo 'gtld:x:666:101:GTLD milter user:/var/spool/postfix:/bin/sh' >> /etc/passwd
 RUN mkdir -p /var/spool/postfix/milter
 RUN chown postfix:postfix /var/spool/postfix/milter

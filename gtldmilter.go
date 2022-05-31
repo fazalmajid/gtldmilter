@@ -5,11 +5,13 @@ import (
 	"bufio"
 	"flag"
 	//"fmt"
-	"github.com/phalaaxx/milter"
 	"log"
 	"net"
+	"net/textproto"
 	"os"
 	"strings"
+
+	"github.com/phalaaxx/milter"
 )
 
 /* global variables */
@@ -26,13 +28,13 @@ type GtldMilter struct {
 func (b *GtldMilter) MailFrom(from string, m *milter.Modifier) (milter.Response, error) {
 	// save from address for later reference
 	b.from = from
-	log.Println("received email from ", b.from)
+	log.Println("MAIL FROM:", b.from)
 	return milter.RespContinue, nil
 }
 
 /* RcptTo is called on envelope from address */
 func (b *GtldMilter) RcptTo(rcptTo string, m *milter.Modifier) (milter.Response, error) {
-	log.Println("received email from ", b.from, " to ", rcptTo)
+	log.Println("RCPT TO:", b.from, " to ", rcptTo)
 	components := strings.Split(b.from, ".")
 	clen := len(components)
 	if clen < 1 {
@@ -40,9 +42,29 @@ func (b *GtldMilter) RcptTo(rcptTo string, m *milter.Modifier) (milter.Response,
 	}
 	tld := components[clen-1]
 	if SuspiciousGTLD[tld] && SuspiciousDests[rcptTo] {
-		log.Println("reject email from ", b.from, " to ", rcptTo)
+		log.Println("REJECT email from", b.from, "to", rcptTo)
 		return milter.RespReject, nil
 	}
+	return milter.RespContinue, nil
+}
+
+// no-ops here just to prevent crashes if the MTA makes the calls anyway
+func (b *GtldMilter) Connect(host string, family string, port uint16, addr net.IP, m *milter.Modifier) (milter.Response, error) {
+	return milter.RespContinue, nil
+}
+func (b *GtldMilter) Helo(name string, m *milter.Modifier) (milter.Response, error) {
+	return milter.RespContinue, nil
+}
+func (b *GtldMilter) Header(name string, value string, m *milter.Modifier) (milter.Response, error) {
+	return milter.RespContinue, nil
+}
+func (b *GtldMilter) Headers(h textproto.MIMEHeader, m *milter.Modifier) (milter.Response, error) {
+	return milter.RespContinue, nil
+}
+func (b *GtldMilter) BodyChunk(chunk []byte, m *milter.Modifier) (milter.Response, error) {
+	return milter.RespContinue, nil
+}
+func (b *GtldMilter) Body(m *milter.Modifier) (milter.Response, error) {
 	return milter.RespContinue, nil
 }
 
@@ -51,7 +73,7 @@ func RunServer(socket net.Listener) {
 	// declare milter init function
 	init := func() (milter.Milter, milter.OptAction, milter.OptProtocol) {
 		return &GtldMilter{},
-			milter.OptAddHeader | milter.OptChangeHeader,
+			milter.OptQuarantine,
 			milter.OptNoConnect | milter.OptNoHelo | milter.OptNoBody | milter.OptNoHeaders | milter.OptNoEOH
 	}
 	// start server

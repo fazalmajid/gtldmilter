@@ -1,23 +1,23 @@
-MAILER-DAEMON 	postmaster
-postmaster 	root
+MAILER-DAEMON:	postmaster
+postmaster:	root
 
-bin 		root
-daemon 		root
-named 		root
-nobody 		root
-uucp 		root
-www 		root
-ftp-bugs 	root
-postfix 	root
+bin:		root
+daemon:		root
+named:		root
+nobody:		root
+uucp:		root
+www:		root
+ftp-bugs:	root
+postfix:	root
 
 
-manager 	root
-dumper 		root
-operator 	root
-abuse 		postmaster
+manager:	root
+dumper:		root
+operator:	root
+abuse:		postmaster
 
-decode 		root
+decode:		root
 
-bad1@example.com        root
-bad2@example.com        root
-good@example.com        root
+bad1:           root
+bad2:           root
+good:           root
