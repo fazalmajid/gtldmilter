@@ -34,7 +34,7 @@ func (b *GtldMilter) MailFrom(from string, m *milter.Modifier) (milter.Response,
 
 /* RcptTo is called on envelope from address */
 func (b *GtldMilter) RcptTo(rcptTo string, m *milter.Modifier) (milter.Response, error) {
-	log.Println("RCPT TO:", b.from, " to ", rcptTo)
+	log.Println("RCPT TO:", b.from, "->", rcptTo)
 	components := strings.Split(b.from, ".")
 	clen := len(components)
 	if clen < 1 {
