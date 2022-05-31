@@ -1,0 +1,37 @@
+<?xml version='1.0'?>
+<!DOCTYPE service_bundle SYSTEM '/usr/share/lib/xml/dtd/service_bundle.dtd.1'>
+<service_bundle type='manifest' name='export'>
+  <service name='fazal/gtldmilter' type='service' version='0'>
+    <dependency name='fs-local' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/filesystem/local'/>
+    </dependency>
+    <dependency name='network-service' grouping='require_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/network/service'/>
+    </dependency>
+    <dependency name='name-services' grouping='require_all' restart_on='refresh' type='service'>
+      <service_fmri value='svc:/milestone/name-services'/>
+    </dependency>
+    <dependency name='identity' grouping='optional_all' restart_on='refresh' type='service'>
+      <service_fmri value='svc:/system/identity:domain'/>
+    </dependency>
+    <dependency name='system-log' grouping='optional_all' restart_on='none' type='service'>
+      <service_fmri value='svc:/system/system-log'/>
+    </dependency>
+    <dependency name='gtld-file' grouping='require_all' restart_on='refresh' type='path'>
+      <service_fmri value='file://localhost/etc/postfix/gtlds.bad'/>
+    </dependency>
+    <dependency name='dests-file' grouping='require_all' restart_on='refresh' type='path'>
+      <service_fmri value='file://localhost/etc/postfix/dests.bad'/>
+    </dependency>
+    <instance name='default' enabled='true'>
+      <method_context project=':default' resource_pool=':default' working_directory='/etc/postfix/domains'>
+        <method_credential group='postfix' limit_privileges=':default' privileges='basic,net_privaddr' supp_groups=':default' user='postmapweb'/>
+        <method_environment>
+          <envvar name='PATH' value='/usr/local/bin:/usr/local/sbin:/usr/bin'/>
+        </method_environment>
+      </method_context>
+      <exec_method name='start' type='method' exec='/etc/postfix/gtldmilter &amp;' timeout_seconds='10'/>
+      <exec_method name='stop' type='method' exec=':kill' timeout_seconds='10'/>
+    </instance>
+  </service>
+</service_bundle>
