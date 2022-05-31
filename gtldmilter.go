@@ -4,7 +4,7 @@ package main
 import (
 	"bufio"
 	"flag"
-	//"fmt"
+	"fmt"
 	"log"
 	"net"
 	"net/textproto"
@@ -43,7 +43,10 @@ func (b *GtldMilter) RcptTo(rcptTo string, m *milter.Modifier) (milter.Response,
 	tld := components[clen-1]
 	if SuspiciousGTLD[tld] && SuspiciousDests[rcptTo] {
 		log.Println("REJECT email from", b.from, "to", rcptTo)
-		return milter.RespReject, nil
+		resp := milter.NewResponseStr('y',
+			fmt.Sprintf("554 5.7.1 <%s>: Sender address rejected: email from crackpot gTLD .%s not allowed", b.from, tld),
+		)
+		return resp, nil
 	}
 	return milter.RespContinue, nil
 }
