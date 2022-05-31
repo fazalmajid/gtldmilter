@@ -34,6 +34,7 @@ and run, using SMF, daemontools or (shudder) systemd the following program as a 
 
     mkdir -p /var/spool/postfix/milter
     chown postfix:postfix /var/spool/postfix/milter
+    chmod 775 /var/spool/postfix/milter 
 
 You will need two config files:
 
