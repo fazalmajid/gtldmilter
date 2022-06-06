@@ -31,5 +31,8 @@ sh:
 logs:
 	docker logs -f $(CONTAINER)
 
+bom: docker-img
+	syft postfix-milter-test|grep -v apk
+
 clean: stop
 	-rm *~
